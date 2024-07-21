@@ -362,6 +362,8 @@ exports.deleteGroup = async(req,res)=>{
         const chatid = req.params.id;
         const chat = await Chat.findById(chatid);
 
+        //const request = await Request.findOneAndDelete({sender:req.user.id});
+
         if(!chat)
         {
             return res.status(400).json({
@@ -494,7 +496,7 @@ exports.sendRequest = async(req,res)=>{
         
         const {userid} = req.body;
 
-        const request = await Request.findOne({sender:req.user.id,receiver:userid});
+        const request = await Request.findOne({sender:req.user.id});
 
         if(request)
         {
@@ -550,7 +552,8 @@ exports.acceptRequest = async(req,res)=>{
         {
             const members = [request.sender._id,request.receiver._id];
             await Chat.create({name:`${request.sender.Name}-${request.receiver.Name}`,members:members})
-            const updatedreq = await Request.findByIdAndUpdate(requestid,{status:"accepeted"});
+            //const updatedreq = await Request.findByIdAndUpdate(requestid,{status:"accepeted"});
+            request.deleteOne();
             Emitevent(req,'REFETCH_CHAT',members);
 
             return res.status(200).json({

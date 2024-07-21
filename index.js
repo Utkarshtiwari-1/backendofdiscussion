@@ -64,7 +64,7 @@ io.on("connection",(socket)=>{
         console.log("socketmemebers",socketMembers);
         try {
             
-            const messageindb = await Message.create({content:message,sender:user,chat:chatid,});
+            const messageindb = await Message.create({content:message,sender:user.id,chat:chatid,});
             console.log("message in db",messageindb);
         } catch (error) {
             console.log("error while message storing in db");
