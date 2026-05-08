@@ -33,7 +33,7 @@ const io = new Server(httpServer,{
 
 require("dotenv").config();
 const port = Number(process.env.PORT) || 5000;
-const host = process.env.HOST || "127.0.0.5";
+
 
 io.use((socket,next)=>{
     const token = socket.handshake.auth.token;
@@ -114,8 +114,8 @@ app.use("/api/v1/chat",chatrouter);
 
 
 
-httpServer.listen(port, host, ()=>{
-    console.log(`app is listining on http://${host}:${port}`);
+httpServer.listen(port, ()=>{
+    console.log(`app is listining on http://localhost:${port}`);
 });
 
-module.exports = usermap;
+module.exports = usermap
