@@ -1,6 +1,6 @@
 const Answers  = require("../Models/Answers");
 const Post = require("../Models/Questions");
-const {Uploadmedia} = require("../Utils/mediauploader");
+const { uploadToR2 } = require("../Utils/r2Uploader");
 
 exports.Createanswer = async(req,res)=>{
     try {
@@ -19,12 +19,16 @@ exports.Createanswer = async(req,res)=>{
         let mediaurl = null;
         if(Media)
         {
-            const filedata =await  Uploadmedia(Media,"Ut");
-            console.log("media uploaded",filedata);
-            if(filedata)
+            
+            const uploadedFile = await uploadToR2(Media, "images/");
+            
+            console.log("media uploaded to r2",uploadedFile);
+           
+            if(uploadedFile.success)
             {
-                mediaurl = filedata.secure_url;
+                mediaurl = uploadedFile.url;
             }
+            console.log("mediaurl",mediaurl);
         }
 
         const answerres = await Answers.create({question,solver:req.user.id,answer,Media:mediaurl});

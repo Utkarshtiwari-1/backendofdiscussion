@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken")
 const Answers = require("../Models/Answers");
 const Chat = require("../Models/Chat");
 const Request = require("../Models/Request");
-const { Uploadmedia } = require("../Utils/mediauploader");
+const {uploadToR2} = require("../Utils/r2Uploader");
 
 exports.Signupuser = async(req,res)=>{
 
@@ -148,7 +148,7 @@ exports.getuserProfile = async(req,res)=>{
             })
         }
 
-        const Answersbyuser = await Answers.countDocuments({solver:userid});
+        let Answersbyuser = await Answers.countDocuments({solver:userid});
 
         if(!Answersbyuser)
         {
@@ -201,8 +201,9 @@ exports.updateimage  = async(req,res)=>{
             })
         }
 
-        const imageupload = await Uploadmedia(image,"Ut");
-        const imageurl = imageupload.secure_url;
+        
+        const uploadedFile = await uploadToR2(image, "images/");
+        const imageurl = uploadedFile.url;
 
         const updateduser = await User.findByIdAndUpdate(userid,{image:imageurl});
 

@@ -1,5 +1,5 @@
 const Question = require("../Models/Question");
-const {Uploadmedia} = require("../Utils/mediauploader");
+const { uploadToR2 } = require("../Utils/r2Uploader");
 
 exports.Createquestion = async(req,res)=>{
 
@@ -19,12 +19,13 @@ exports.Createquestion = async(req,res)=>{
         let mediaurl = null;
         if(Media)
         {
-            const filedata =await  Uploadmedia(Media,"Ut");
-            console.log("media uploaded",filedata);
-            if(filedata)
+            console.log("media file found",Media);
+            const uploadedFile = await uploadToR2(Media,"uploads");
+            if(uploadedFile.success)
             {
-                mediaurl = filedata.secure_url;
+                mediaurl = uploadedFile.url;
             }
+            
         }
 
        const response = await Question.create({problem,problemdescription,tags,Media:mediaurl,mediaType:mediaType});
@@ -79,12 +80,13 @@ exports.updateQuestion = async(req,res)=>{
         }
         if(Media)
         {
-            const filedata =await  Uploadmedia(Media,"Ut");
-            console.log("media uploaded",filedata);
-            if(filedata)
+            const uploadedFile = await uploadToR2(Media, "images/");
+            
+           
+            if(uploadedFile.success)
             {
-                questiondata.Media = filedata.secure_url;
-            }
+                questiondata.Media = uploadedFile.url;
+            }   
         }
 
         await questiondata.save();

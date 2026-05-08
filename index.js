@@ -6,7 +6,10 @@ const app = express();
 const cors = require("cors");
 const dbconnect = require("./config/databaseconnection");
 const cookieParser = require("cookie-parser");
-const connectcloudinary = require("./config/Cloudinary");
+
+// how to connect r2
+
+
 const fileupload = require("express-fileupload");
 const jwt = require("jsonwebtoken");
 const Message = require("./Models/Message");
@@ -29,7 +32,8 @@ const io = new Server(httpServer,{
 });
 
 require("dotenv").config();
-const port = process.env.PORT;
+const port = Number(process.env.PORT) || 5000;
+const host = process.env.HOST || "127.0.0.5";
 
 io.use((socket,next)=>{
     const token = socket.handshake.auth.token;
@@ -103,15 +107,15 @@ app.use(fileupload({
     tempFileDir:"/tmp",
 }));
 dbconnect();
-connectcloudinary();
+
 
 app.use("/api/v1",router);
 app.use("/api/v1/chat",chatrouter);
 
 
 
-httpServer.listen(port,()=>{
-    console.log(`app is listining on port ${port}`);
-})
+httpServer.listen(port, host, ()=>{
+    console.log(`app is listining on http://${host}:${port}`);
+});
 
 module.exports = usermap;
